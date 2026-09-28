@@ -3,7 +3,7 @@ $year = date('Y');
 
 $modules = [
   ['code'=>'M201','title'=>"Préparation d'un projet web",'domain'=>'Conception, Agile/Scrum','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
-  ['code'=>'M202','title'=>'Approche Agile','domain'=>'Gestion et suivi de projet','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
+  ['code'=>'M202','title'=>'Approche Agile','domain'=>'Gestion et suivi de projet','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter','gallery'=>'images/m202'],
   ['code'=>'M203','title'=>'Gestion des données','domain'=>'Bases de données relationnelles et non-relationnelles, SQL/NoSQL','cat'=>'data','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M204','title'=>'Développement Front-end','domain'=>'JavaScript avancé, React.js / Intégration','cat'=>'frontend','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M205','title'=>'Développement Back-end','domain'=>'PHP, Laravel, APIs, Node.js','cat'=>'backend','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
@@ -101,6 +101,34 @@ nav .wrap{display:flex; justify-content:space-between; align-items:center}
 .module-updated{margin-top:18px; font-size:0.78rem; color:var(--text-dim); display:flex; align-items:center; gap:6px}
 .dot{width:6px; height:6px; border-radius:50%; background:var(--cat-color, var(--blue)); display:inline-block}
 
+.gallery-toggle{
+  font:inherit; font-size:0.88rem; font-weight:600; cursor:pointer;
+  color:var(--cat-color); background:transparent;
+  border:1px solid var(--cat-color); border-radius:8px; padding:8px 14px;
+  transition:background .18s ease, color .18s ease;
+}
+.gallery-toggle:hover,.gallery-toggle[aria-expanded="true"]{background:var(--cat-color); color:#0F172A}
+.gallery{display:none}
+.gmodal{position:fixed; inset:0; z-index:90; background:var(--bg); overflow-y:auto; padding:0 24px 40px}
+.gmodal[hidden]{display:none}
+.gmodal-bar{position:sticky; top:0; z-index:2; display:flex; justify-content:space-between; align-items:center; padding:20px 0; background:var(--bg); border-bottom:1px solid var(--border); margin-bottom:24px}
+.gmodal-bar h3{font-size:1.1rem}
+.gmodal-close{font:inherit; cursor:pointer; color:var(--text); background:transparent; border:1px solid var(--border); border-radius:8px; padding:8px 16px}
+.gmodal-close:hover{border-color:var(--emerald); color:var(--emerald)}
+.gmodal-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; max-width:1100px; margin:0 auto}
+.lb-btn{position:absolute; top:50%; transform:translateY(-50%); font-size:1.6rem; cursor:pointer; color:#fff; background:rgba(255,255,255,.12); border:0; border-radius:50%; width:48px; height:48px}
+.lb-btn:hover{background:var(--emerald); color:#04150F}
+#lb-prev{left:16px} #lb-next{right:16px}
+.lb-count{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#CBD5E1; font-size:0.85rem}
+.thumb{padding:0; border:1px solid var(--border); border-radius:8px; overflow:hidden; cursor:zoom-in; background:none; aspect-ratio:16/9}
+.thumb img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .25s ease}
+.thumb:hover img{transform:scale(1.06)}
+.gallery-empty{grid-column:1/-1; font-size:0.85rem; color:var(--text-dim)}
+.gallery-empty code{color:var(--cat-color)}
+.lightbox{position:fixed; inset:0; z-index:100; background:rgba(8,12,24,.92); display:flex; align-items:center; justify-content:center; padding:24px; cursor:zoom-out}
+.lightbox[hidden]{display:none}
+.lightbox img{max-width:90vw; max-height:85vh; width:auto; height:auto; object-fit:contain; border-radius:10px}
+
 .faith{padding:110px 0; text-align:center}
 .faith .divider{width:60px; height:2px; background:var(--emerald); margin:0 auto 44px}
 .faith .arabic{font-family:'Noto Naskh Arabic',serif; font-size:clamp(1.5rem,3.5vw,2.1rem); line-height:2.1; direction:rtl; max-width:36ch; margin:0 auto; font-weight:600}
@@ -123,7 +151,7 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
 
 <nav>
   <div class="wrap">
-    <div class="logo">Oussama<span></div>
+    <div class="logo">Oussama<span>.</span>dev</div>
     <div class="nav-links">
       <a href="#modules">Modules</a>
       <a href="#foi">À propos</a>
@@ -183,6 +211,24 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
         <h4>Projets récents</h4>
         <p><?php echo htmlspecialchars($m['proj']); ?></p>
       </div>
+      <?php if (!empty($m['gallery'])):
+        $imgs = glob(__DIR__ . '/' . $m['gallery'] . '/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}', GLOB_BRACE) ?: [];
+        natsort($imgs);
+        $galId = 'gal-' . strtolower($m['code']);
+      ?>
+      <div class="module-block">
+        <h4>Images des exercices</h4>
+        <button type="button" class="gallery-toggle" data-title="Images des exercices — <?php echo htmlspecialchars($m['code']); ?>" aria-controls="<?php echo $galId; ?>">Voir les images (<?php echo count($imgs); ?>)</button>
+        <div class="gallery" id="<?php echo $galId; ?>" hidden>
+          <?php if ($imgs): foreach ($imgs as $img):
+            $src = htmlspecialchars($m['gallery'] . '/' . basename($img)); ?>
+            <button type="button" class="thumb" data-full="<?php echo $src; ?>"><img src="<?php echo $src; ?>" loading="lazy" alt="Exercice <?php echo htmlspecialchars($m['code']); ?>"></button>
+          <?php endforeach; else: ?>
+            <p class="gallery-empty">Aucune image pour le moment. Ajoute-les dans <code><?php echo htmlspecialchars($m['gallery']); ?>/</code></p>
+          <?php endif; ?>
+        </div>
+      </div>
+      <?php endif; ?>
       <div class="module-updated"><span class="dot"></span>Dernière mise à jour : <?php echo htmlspecialchars($m['updated']); ?></div>
     </div>
     <?php endforeach; ?>
@@ -205,7 +251,50 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
   </div>
 </footer>
 
+<div class="gmodal" id="gmodal" hidden>
+  <div class="gmodal-bar" style="max-width:1100px; margin-left:auto; margin-right:auto">
+    <h3 id="gmodal-title"></h3>
+    <button type="button" class="gmodal-close" id="gmodal-close">Fermer</button>
+  </div>
+  <div class="gmodal-grid" id="gmodal-grid"></div>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button type="button" class="lb-btn" id="lb-prev" aria-label="Précédente">‹</button>
+  <img alt="">
+  <button type="button" class="lb-btn" id="lb-next" aria-label="Suivante">›</button>
+  <div class="lb-count" id="lb-count"></div>
+</div>
+
 <script>
+const modal=document.getElementById('gmodal'), mGrid=document.getElementById('gmodal-grid'), mTitle=document.getElementById('gmodal-title');
+const lb=document.getElementById('lightbox'), lbImg=lb.querySelector('img'), lbCount=document.getElementById('lb-count');
+let list=[], idx=0;
+function show(i){ idx=(i+list.length)%list.length; lbImg.src=list[idx]; lbCount.textContent=(idx+1)+' / '+list.length; lb.hidden=false; }
+function closeModal(){ modal.hidden=true; document.body.style.overflow=''; }
+document.querySelectorAll('.gallery-toggle').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const src=document.getElementById(btn.getAttribute('aria-controls'));
+    mTitle.textContent=btn.dataset.title;
+    mGrid.innerHTML=src.innerHTML;
+    const thumbs=[...mGrid.querySelectorAll('.thumb')];
+    list=thumbs.map(t=>t.dataset.full);
+    thumbs.forEach((t,i)=>t.addEventListener('click',()=>show(i)));
+    modal.hidden=false; document.body.style.overflow='hidden';
+  });
+});
+document.getElementById('gmodal-close').addEventListener('click',closeModal);
+document.getElementById('lb-prev').addEventListener('click',e=>{ e.stopPropagation(); show(idx-1); });
+document.getElementById('lb-next').addEventListener('click',e=>{ e.stopPropagation(); show(idx+1); });
+lb.addEventListener('click',()=>{ lb.hidden=true; });
+document.addEventListener('keydown',e=>{
+  if(!lb.hidden){
+    if(e.key==='Escape') lb.hidden=true;
+    if(e.key==='ArrowRight') show(idx+1);
+    if(e.key==='ArrowLeft') show(idx-1);
+  } else if(!modal.hidden && e.key==='Escape') closeModal();
+});
+
 try{
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
