@@ -3,7 +3,7 @@ $year = date('Y');
 
 $modules = [
   ['code'=>'M201','title'=>"Préparation d'un projet web",'domain'=>'Conception, Agile/Scrum','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
-  ['code'=>'M202','title'=>'Approche Agile','domain'=>'Gestion et suivi de projet','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter','gallery'=>'/images/M202'],
+  ['code'=>'M202','title'=>'Approche Agile','domain'=>'Gestion et suivi de projet','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter','gallery_dir'=>'/images/M202', 'images'=>['IMG_20260928_145434.jpg', 'IMG_20260928_145515.jpg','IMG_20260928_145555.jpg','IMG_20260928_145619.jpg','IMG_20260928_145656.jpg']],
   ['code'=>'M203','title'=>'Gestion des données','domain'=>'Bases de données relationnelles et non-relationnelles, SQL/NoSQL','cat'=>'data','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M204','title'=>'Développement Front-end','domain'=>'JavaScript avancé, React.js / Intégration','cat'=>'frontend','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M205','title'=>'Développement Back-end','domain'=>'PHP, Laravel, APIs, Node.js','cat'=>'backend','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
@@ -211,9 +211,8 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
         <h4>Projets récents</h4>
         <p><?php echo htmlspecialchars($m['proj']); ?></p>
       </div>
-      <?php if (!empty($m['gallery'])):
-        $imgs = glob(__DIR__ . '/' . $m['gallery'] . '/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}', GLOB_BRACE) ?: [];
-        natsort($imgs);
+      <?php if (!empty($m['images'])):
+        $imgs = $m['images'];
         $galId = 'gal-' . strtolower($m['code']);
       ?>
       <div class="module-block">
@@ -221,10 +220,10 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
         <button type="button" class="gallery-toggle" data-title="Images des exercices — <?php echo htmlspecialchars($m['code']); ?>" aria-controls="<?php echo $galId; ?>">Voir les images (<?php echo count($imgs); ?>)</button>
         <div class="gallery" id="<?php echo $galId; ?>" hidden>
           <?php if ($imgs): foreach ($imgs as $img):
-            $src = htmlspecialchars($m['gallery'] . '/' . basename($img)); ?>
+            $src = htmlspecialchars($m['gallery_dir'] . '/' . basename($img)); ?>
             <button type="button" class="thumb" data-full="<?php echo $src; ?>"><img src="<?php echo $src; ?>" loading="lazy" alt="Exercice <?php echo htmlspecialchars($m['code']); ?>"></button>
           <?php endforeach; else: ?>
-            <p class="gallery-empty">Aucune image pour le moment. Ajoute-les dans <code><?php echo htmlspecialchars($m['gallery']); ?>/</code></p>
+            <p class="gallery-empty">Aucune image pour le moment. Ajoute-les dans <code><?php echo htmlspecialchars($m['gallery_dir']); ?>/</code></p>
           <?php endif; ?>
         </div>
       </div>
