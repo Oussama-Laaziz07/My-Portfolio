@@ -3,7 +3,7 @@ $year = date('Y');
 
 $modules = [
   ['code'=>'M201','title'=>"Préparation d'un projet web",'domain'=>'Conception, Agile/Scrum','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
-  ['code'=>'M202','title'=>'Approche Agile','domain'=>'Gestion et suivi de projet','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter','gallery_dir'=>'/images/M202', 'images'=>['IMG_20260928_145434.jpg', 'IMG_20260928_145515.jpg','IMG_20260928_145555.jpg','IMG_20260928_145619.jpg','IMG_20260928_145656.jpg']],
+  ['code'=>'M202','title'=>'Approche Agile','domain'=>'Gestion et suivi de projet','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter','gallery_dir'=>'/images/M202', 'images'=>['IMG_20260928_145434.jpg', 'IMG_20260928_145515.jpg','IMG_20260928_145555.jpg','IMG_20260928_145619.jpg','IMG_20260928_145656.jpg','Capture d’écran 2026-09-28 152812.jpg']],
   ['code'=>'M203','title'=>'Gestion des données','domain'=>'Bases de données relationnelles et non-relationnelles, SQL/NoSQL','cat'=>'data','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M204','title'=>'Développement Front-end','domain'=>'JavaScript avancé, React.js / Intégration','cat'=>'frontend','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M205','title'=>'Développement Back-end','domain'=>'PHP, Laravel, APIs, Node.js','cat'=>'backend','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
