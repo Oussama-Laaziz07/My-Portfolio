@@ -316,7 +316,7 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
   <div class="wrap">
     <div class="copyright">© <?php echo $year; ?> Oussama Laaziz. Crafted with dedication.</div>
     <div class="foot-links">
-      <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/Oussama-Laaziz07/My-Portfolio" target="_blank" rel="noopener">GitHub</a>
       <a href="https://www.linkedin.com/in/oussama-laaziz-8690453a5/" target="_blank" rel="noopener">LinkedIn</a>
     </div>
   </div>
