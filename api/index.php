@@ -22,7 +22,7 @@ function slugify($s) {
 
 // Affiche un bouton qui ouvre une galerie plein écran pour le dossier d'images donné.
 function gallery_button($label, $folder, $id, $color = 'var(--emerald)') {
-  $imgs = glob(__DIR__ . '/' . $folder . '/*.{jpg,jfif,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}', GLOB_BRACE) ?: [];
+  $imgs = glob(__DIR__ . '/' . $folder . '/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}', GLOB_BRACE) ?: [];
   natsort($imgs);
   ob_start(); ?>
   <button type="button" class="gallery-toggle" data-title="<?php echo htmlspecialchars($label); ?>" aria-controls="<?php echo $id; ?>" style="--cat-color:<?php echo $color; ?>">
@@ -251,14 +251,23 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
           $color = $atelierColors[$i % count($atelierColors)];
         ?>
         <div class="atelier-group">
-          <p class="atelier-label" style="--cat-color: <?php echo $color; ?>">Atelier <?php echo $num; ?></p>
-          <div class="dossier-row">
-            <?php foreach ($dossiers as $d):
-              $folder = 'images/ateliers/atelier-' . $num . '/' . slugify($d);
-              $id = 'gal-atelier-' . $num . '-' . slugify($d);
-              echo gallery_button($d, $folder, $id, $color);
-            endforeach; ?>
-          </div>
+          <?php if ($num === 1): ?>
+            <p class="atelier-label" style="--cat-color: <?php echo $color; ?>">Atelier <?php echo $num; ?></p>
+            <div class="dossier-row">
+              <?php foreach ($dossiers as $d):
+                $folder = 'images/ateliers/atelier-' . $num . '/' . slugify($d);
+                $id = 'gal-atelier-' . $num . '-' . slugify($d);
+                echo gallery_button($d, $folder, $id, $color);
+              endforeach; ?>
+            </div>
+          <?php else:
+            $folder = 'images/ateliers/atelier-' . $num;
+            $id = 'gal-atelier-' . $num;
+          ?>
+            <div class="dossier-row">
+              <?php echo gallery_button('Atelier ' . $num, $folder, $id, $color); ?>
+            </div>
+          <?php endif; ?>
         </div>
         <?php endforeach; ?>
       </div>
