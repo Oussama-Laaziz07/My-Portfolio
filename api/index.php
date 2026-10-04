@@ -11,28 +11,56 @@ $modules = [
   ['code'=>'M207','title'=>'Projet de synthèse','domain'=>'Projet académique final','cat'=>'synthese','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
 ];
 
-// Ateliers : chaque atelier a les mêmes dossiers ; change ici pour ajouter un atelier ou un dossier.
 $ateliers = [1, 2, 3];
-$dossiers = ['Dossier 2', 'Dossier 3', 'Dossier 4', 'En groupe'];
+// Exact folder names matching your screenshot:
+$dossiers = ['Dossier 2', 'Dossier 3 (AdvancedEventSolution)', 'Dossier 3 (DKM)', 'En groupe'];
 $atelierColors = ['var(--amber)', 'var(--violet)', 'var(--blue)', 'var(--emerald)', 'var(--teal)', 'var(--rose)'];
 
 function slugify($s) {
-  return strtolower(str_replace(' ', '-', $s));
+  return strtolower(str_replace([' ', '(', ')'], ['-', '', ''], $s));
 }
 
-// Affiche un bouton qui ouvre une galerie plein écran pour le dossier d'images donné.
-function gallery_button($label, $folder, $id, $color = 'var(--emerald)') {
-  $imgs = glob(__DIR__ . '/' . $folder . '/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}', GLOB_BRACE) ?: [];
+// Scans folder on disk from project root and outputs valid public URLs
+function gallery_button($label, $relativeFolder, $id, $color = 'var(--emerald)') {
+  $cleanPath = ltrim($relativeFolder, '/');
+  
+  // Resolve base directory whether script runs inside /api/ or root
+  $projectRoot = (basename(__DIR__) === 'api') ? dirname(__DIR__) : __DIR__;
+  
+  // Try finding path directly or inside public/ folder
+  $diskPath = $projectRoot . '/' . $cleanPath;
+  if (!is_dir($diskPath)) {
+    $diskPath = $projectRoot . '/public/' . $cleanPath;
+  }
+
+  $imgs = [];
+  if (is_dir($diskPath)) {
+    $files = glob($diskPath . '/*');
+    if ($files) {
+      $validExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+      foreach ($files as $f) {
+        $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+        if (in_array($ext, $validExts)) {
+          $imgs[] = $f;
+        }
+      }
+    }
+  }
+
   natsort($imgs);
   ob_start(); ?>
   <button type="button" class="gallery-toggle" data-title="<?php echo htmlspecialchars($label); ?>" aria-controls="<?php echo $id; ?>" style="--cat-color:<?php echo $color; ?>">
     <?php echo htmlspecialchars($label); ?> (<?php echo count($imgs); ?>)
   </button>
   <div class="gallery" id="<?php echo $id; ?>" hidden>
-    <?php if ($imgs): foreach ($imgs as $img): $src = htmlspecialchars($folder . '/' . basename($img)); ?>
+    <?php if ($imgs): foreach ($imgs as $img): 
+      // Form clean web path for browser (<img src="/images/...">)
+      $webPath = preg_replace('#^public/#', '', $cleanPath);
+      $src = htmlspecialchars('/' . $webPath . '/' . basename($img)); 
+    ?>
       <button type="button" class="thumb" data-full="<?php echo $src; ?>"><img src="<?php echo $src; ?>" loading="lazy" alt="<?php echo htmlspecialchars($label); ?>"></button>
     <?php endforeach; else: ?>
-      <p class="gallery-empty">Aucune image. Ajoute-les dans <code><?php echo htmlspecialchars($folder); ?>/</code></p>
+      <p class="gallery-empty">Aucune image. Ajoute-les dans <code><?php echo htmlspecialchars($relativeFolder); ?>/</code></p>
     <?php endif; ?>
   </div>
   <?php
@@ -255,13 +283,13 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
             <p class="atelier-label" style="--cat-color: <?php echo $color; ?>">Atelier <?php echo $num; ?></p>
             <div class="dossier-row">
               <?php foreach ($dossiers as $d):
-                $folder = 'images/ateliers/atelier-' . $num . '/' . slugify($d);
+                $folder = 'images/ateliers/Atelier ' . $num . '/' . $d;
                 $id = 'gal-atelier-' . $num . '-' . slugify($d);
                 echo gallery_button($d, $folder, $id, $color);
               endforeach; ?>
             </div>
           <?php else:
-            $folder = 'images/ateliers/atelier-' . $num;
+            $folder = 'images/ateliers/Atelier ' . $num;
             $id = 'gal-atelier-' . $num;
           ?>
             <div class="dossier-row">
