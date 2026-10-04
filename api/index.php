@@ -3,13 +3,41 @@ $year = date('Y');
 
 $modules = [
   ['code'=>'M201','title'=>"Préparation d'un projet web",'domain'=>'Conception, Agile/Scrum','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
-  ['code'=>'M202','title'=>'Approche Agile','domain'=>'Gestion et suivi de projet','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter','gallery_dir'=>'/images/M202', 'images'=>['IMG_20260928_145434.jpg', 'IMG_20260928_145515.jpg','IMG_20260928_145555.jpg','IMG_20260928_145619.jpg','IMG_20260928_145656.jpg','Capture d’écran 2026-09-28 152812.jpg']],
+  ['code'=>'M202','title'=>'Approche Agile','domain'=>'Gestion et suivi de projet','cat'=>'gestion','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M203','title'=>'Gestion des données','domain'=>'Bases de données relationnelles et non-relationnelles, SQL/NoSQL','cat'=>'data','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M204','title'=>'Développement Front-end','domain'=>'JavaScript avancé, React.js / Intégration','cat'=>'frontend','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M205','title'=>'Développement Back-end','domain'=>'PHP, Laravel, APIs, Node.js','cat'=>'backend','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M206','title'=>'Création d\'une application Cloud Native','domain'=>'Cloud computing, déploiements','cat'=>'cloud','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
   ['code'=>'M207','title'=>'Projet de synthèse','domain'=>'Projet académique final','cat'=>'synthese','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
 ];
+
+// Ateliers : chaque atelier a les mêmes dossiers ; change ici pour ajouter un atelier ou un dossier.
+$ateliers = [1, 2, 3];
+$dossiers = ['Dossier 2', 'Dossier 3', 'Dossier 4', 'En groupe'];
+$atelierColors = ['var(--amber)', 'var(--violet)', 'var(--blue)', 'var(--emerald)', 'var(--teal)', 'var(--rose)'];
+
+function slugify($s) {
+  return strtolower(str_replace(' ', '-', $s));
+}
+
+// Affiche un bouton qui ouvre une galerie plein écran pour le dossier d'images donné.
+function gallery_button($label, $folder, $id, $color = 'var(--emerald)') {
+  $imgs = glob(__DIR__ . '/' . $folder . '/*.{jpg,jfif,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}', GLOB_BRACE) ?: [];
+  natsort($imgs);
+  ob_start(); ?>
+  <button type="button" class="gallery-toggle" data-title="<?php echo htmlspecialchars($label); ?>" aria-controls="<?php echo $id; ?>" style="--cat-color:<?php echo $color; ?>">
+    <?php echo htmlspecialchars($label); ?> (<?php echo count($imgs); ?>)
+  </button>
+  <div class="gallery" id="<?php echo $id; ?>" hidden>
+    <?php if ($imgs): foreach ($imgs as $img): $src = htmlspecialchars($folder . '/' . basename($img)); ?>
+      <button type="button" class="thumb" data-full="<?php echo $src; ?>"><img src="<?php echo $src; ?>" loading="lazy" alt="<?php echo htmlspecialchars($label); ?>"></button>
+    <?php endforeach; else: ?>
+      <p class="gallery-empty">Aucune image. Ajoute-les dans <code><?php echo htmlspecialchars($folder); ?>/</code></p>
+    <?php endif; ?>
+  </div>
+  <?php
+  return ob_get_clean();
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -125,6 +153,11 @@ nav .wrap{display:flex; justify-content:space-between; align-items:center}
 .thumb:hover img{transform:scale(1.06)}
 .gallery-empty{grid-column:1/-1; font-size:0.85rem; color:var(--text-dim)}
 .gallery-empty code{color:var(--cat-color)}
+.atelier-group{margin-top:16px}
+.atelier-group:first-of-type{margin-top:10px}
+.atelier-label{font-size:0.85rem; font-weight:600; color:var(--cat-color); margin-bottom:8px}
+.dossier-row{display:flex; flex-wrap:wrap; gap:8px}
+.gallery-toggle{font-size:0.82rem; padding:7px 12px}
 .lightbox{position:fixed; inset:0; z-index:100; background:rgba(8,12,24,.92); display:flex; align-items:center; justify-content:center; padding:24px; cursor:zoom-out}
 .lightbox[hidden]{display:none}
 .lightbox img{max-width:90vw; max-height:85vh; width:auto; height:auto; object-fit:contain; border-radius:10px}
@@ -211,21 +244,23 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
         <h4>Projets récents</h4>
         <p><?php echo htmlspecialchars($m['proj']); ?></p>
       </div>
-      <?php if (!empty($m['images'])):
-        $imgs = $m['images'];
-        $galId = 'gal-' . strtolower($m['code']);
-      ?>
+      <?php if ($m['code'] === 'M202'): ?>
       <div class="module-block">
-        <h4>Images des exercices</h4>
-        <button type="button" class="gallery-toggle" data-title="Images des exercices — <?php echo htmlspecialchars($m['code']); ?>" aria-controls="<?php echo $galId; ?>">Voir les images (<?php echo count($imgs); ?>)</button>
-        <div class="gallery" id="<?php echo $galId; ?>" hidden>
-          <?php if ($imgs): foreach ($imgs as $img):
-            $src = htmlspecialchars($m['gallery_dir'] . '/' . basename($img)); ?>
-            <button type="button" class="thumb" data-full="<?php echo $src; ?>"><img src="<?php echo $src; ?>" loading="lazy" alt="Exercice <?php echo htmlspecialchars($m['code']); ?>"></button>
-          <?php endforeach; else: ?>
-            <p class="gallery-empty">Aucune image pour le moment. Ajoute-les dans <code><?php echo htmlspecialchars($m['gallery_dir']); ?>/</code></p>
-          <?php endif; ?>
+        <h4>Ateliers</h4>
+        <?php foreach ($ateliers as $i => $num):
+          $color = $atelierColors[$i % count($atelierColors)];
+        ?>
+        <div class="atelier-group">
+          <p class="atelier-label" style="--cat-color: <?php echo $color; ?>">Atelier <?php echo $num; ?></p>
+          <div class="dossier-row">
+            <?php foreach ($dossiers as $d):
+              $folder = 'images/ateliers/atelier-' . $num . '/' . slugify($d);
+              $id = 'gal-atelier-' . $num . '-' . slugify($d);
+              echo gallery_button($d, $folder, $id, $color);
+            endforeach; ?>
+          </div>
         </div>
+        <?php endforeach; ?>
       </div>
       <?php endif; ?>
       <div class="module-updated"><span class="dot"></span>Dernière mise à jour : <?php echo htmlspecialchars($m['updated']); ?></div>
