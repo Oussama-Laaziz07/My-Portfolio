@@ -18,8 +18,8 @@ $modules = [
 // Laissez vide `[]` si vous n'avez pas de sous-dossiers.
 $ateliers = [
   1 => ['Dossier 2', 'Dossier 3 (AdvancedEventSolution)', 'Dossier 3 (DKM)', 'En groupe'],
-  2 => ['Partie 1'], // <-- Modifiez/Ajoutez les dossiers pour Atelier 2 ici
-  3 => ['Partie 2']                          // <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
+  2 => ['Partie 1','Partie 2'], // <-- Modifiez/Ajoutez les dossiers pour Atelier 2 ici
+  3 => []                          // <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
 ];
 // ---------------------------------------------------------
 
