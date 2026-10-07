@@ -11,9 +11,18 @@ $modules = [
   ['code'=>'M207','title'=>'Projet de synthèse','domain'=>'Projet académique final','cat'=>'synthese','ex'=>'—','proj'=>'—','updated'=>'À compléter'],
 ];
 
-$ateliers = [1, 2, 3];
-// Exact folder names matching your screenshot:
-$dossiers = ['Dossier 2', 'Dossier 3 (AdvancedEventSolution)', 'Dossier 3 (DKM)', 'En groupe'];
+// ---------------------------------------------------------
+// ORGANISATION DES ATELIERS
+// ---------------------------------------------------------
+// Ajoutez simplement les noms de vos sous-dossiers ici. 
+// Laissez vide `[]` si vous n'avez pas de sous-dossiers.
+$ateliers = [
+  1 => ['Dossier 2', 'Dossier 3 (AdvancedEventSolution)', 'Dossier 3 (DKM)', 'En groupe'],
+  2 => ['Partie 1'], // <-- Modifiez/Ajoutez les dossiers pour Atelier 2 ici
+  3 => []                          // <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
+];
+// ---------------------------------------------------------
+
 $atelierColors = ['var(--amber)', 'var(--violet)', 'var(--blue)', 'var(--emerald)', 'var(--teal)', 'var(--rose)'];
 
 function slugify($s) {
@@ -21,27 +30,25 @@ function slugify($s) {
 }
 
 // Scans folder on disk from project root and outputs valid public URLs
-function gallery_button($label, $relativeFolder, $id, $color = 'var(--emerald)') {
+function gallery_button($label,$relativeFolder, $id,$color = 'var(--emerald)') {
   $cleanPath = ltrim($relativeFolder, '/');
   
   // Resolve base directory whether script runs inside /api/ or root
   $projectRoot = (basename(__DIR__) === 'api') ? dirname(__DIR__) : __DIR__;
   
   // Try finding path directly or inside public/ folder
-  $diskPath = $projectRoot . '/' . $cleanPath;
-  if (!is_dir($diskPath)) {
-    $diskPath = $projectRoot . '/public/' . $cleanPath;
+  $diskPath = $projectRoot . '/' .$cleanPath;
+  if (!is_dir($diskPath)) {$diskPath = $projectRoot . '/public/' .$cleanPath;
   }
 
   $imgs = [];
   if (is_dir($diskPath)) {
     $files = glob($diskPath . '/*');
-    if ($files) {
-      $validExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-      foreach ($files as $f) {
+    if ($files) {$validExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+      foreach ($files as$f) {
         $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
-        if (in_array($ext, $validExts)) {
-          $imgs[] = $f;
+        if (in_array($ext,$validExts)) {
+          $imgs[] =$f;
         }
       }
     }
@@ -53,10 +60,9 @@ function gallery_button($label, $relativeFolder, $id, $color = 'var(--emerald)')
     <?php echo htmlspecialchars($label); ?> (<?php echo count($imgs); ?>)
   </button>
   <div class="gallery" id="<?php echo $id; ?>" hidden>
-    <?php if ($imgs): foreach ($imgs as $img): 
+    <?php if ($imgs): foreach ($imgs as$img): 
       // Form clean web path for browser (<img src="/images/...">)
-      $webPath = preg_replace('#^public/#', '', $cleanPath);
-      $src = htmlspecialchars('/' . $webPath . '/' . basename($img)); 
+      $webPath = preg_replace('#^public/#', '', $cleanPath);$src = htmlspecialchars('/' . $webPath . '/' . basename($img)); 
     ?>
       <button type="button" class="thumb" data-full="<?php echo $src; ?>"><img src="<?php echo $src; ?>" loading="lazy" alt="<?php echo htmlspecialchars($label); ?>"></button>
     <?php endforeach; else: ?>
@@ -255,8 +261,7 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
       'cloud'    => 'var(--teal)',
       'synthese' => 'var(--rose)',
     ];
-    foreach ($modules as $m):
-      $color = $catColors[$m['cat']] ?? 'var(--emerald)';
+    foreach ($modules as $m):$color = $catColors[$m['cat']] ?? 'var(--emerald)';
     ?>
     <div class="module-card" style="--cat-color: <?php echo $color; ?>">
       <div class="module-top">
@@ -275,25 +280,25 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
       <?php if ($m['code'] === 'M202'): ?>
       <div class="module-block">
         <h4>Ateliers</h4>
-        <?php foreach ($ateliers as $i => $num):
-          $color = $atelierColors[$i % count($atelierColors)];
+        <?php 
+        $i = 0;
+        foreach ($ateliers as$num => $dossiersList):$color = $atelierColors[$i % count($atelierColors)];$i++;
         ?>
         <div class="atelier-group">
-          <?php if ($num === 1): ?>
+          <?php if (!empty($dossiersList)): ?>
             <p class="atelier-label" style="--cat-color: <?php echo $color; ?>">Atelier <?php echo $num; ?></p>
             <div class="dossier-row">
-              <?php foreach ($dossiers as $d):
-                $folder = 'images/ateliers/Atelier ' . $num . '/' . $d;
+              <?php foreach ($dossiersList as $d):$folder = 'images/ateliers/Atelier ' . $num . '/' .$d;
                 $id = 'gal-atelier-' . $num . '-' . slugify($d);
-                echo gallery_button($d, $folder, $id, $color);
+                echo gallery_button($d,$folder, $id,$color);
               endforeach; ?>
             </div>
-          <?php else:
-            $folder = 'images/ateliers/Atelier ' . $num;
-            $id = 'gal-atelier-' . $num;
+          <?php else: 
+            $folder = 'images/ateliers/Atelier ' .$num;
+            $id = 'gal-atelier-' .$num;
           ?>
             <div class="dossier-row">
-              <?php echo gallery_button('Atelier ' . $num, $folder, $id, $color); ?>
+              <?php echo gallery_button('Atelier ' . $num,$folder, $id,$color); ?>
             </div>
           <?php endif; ?>
         </div>
