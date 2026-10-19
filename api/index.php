@@ -19,7 +19,7 @@ $modules = [
 $ateliers = [
   1 => ['Dossier 2', 'Dossier 3 (AdvancedEventSolution)', 'Dossier 3 (DKM)', 'En groupe'],
   2 => ['Partie 1','Partie 2'], // <-- Modifiez/Ajoutez les dossiers pour Atelier 2 ici
-  4 => 'websitenew-weld.vercel.app',// <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
+  4 => 'https://websitenew-weld.vercel.app/',// <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
   5 => []
 ];
 // ---------------------------------------------------------
