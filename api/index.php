@@ -19,7 +19,8 @@ $modules = [
 $ateliers = [
   1 => ['Dossier 2', 'Dossier 3 (AdvancedEventSolution)', 'Dossier 3 (DKM)', 'En groupe'],
   2 => ['Partie 1','Partie 2'], // <-- Modifiez/Ajoutez les dossiers pour Atelier 2 ici
-  3 => []                          // <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
+  4 => ['websitenew-weld.vercel.app'],// <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
+  5 => []
 ];
 // ---------------------------------------------------------
 
@@ -277,30 +278,35 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
         <h4>Projets récents</h4>
         <p><?php echo htmlspecialchars($m['proj']); ?></p>
       </div>
-      <?php if ($m['code'] === 'M202'): ?>
+     <?php if ($m['code'] === 'M202'): ?>
       <div class="module-block">
         <h4>Ateliers</h4>
         <?php 
         $i = 0;
-        foreach ($ateliers as$num => $dossiersList):$color = $atelierColors[$i % count($atelierColors)];$i++;
+        foreach ($ateliers as $num => $dossiersList):
+          $color = $atelierColors[$i % count($atelierColors)];
+          $i++;
         ?>
         <div class="atelier-group">
-          <?php if (!empty($dossiersList)): ?>
-            <p class="atelier-label" style="--cat-color: <?php echo $color; ?>">Atelier <?php echo $num; ?></p>
-            <div class="dossier-row">
-              <?php foreach ($dossiersList as $d):$folder = 'images/ateliers/Atelier ' . $num . '/' .$d;
-                $id = 'gal-atelier-' . $num . '-' . slugify($d);
-                echo gallery_button($d,$folder, $id,$color);
-              endforeach; ?>
-            </div>
-          <?php else: 
-            $folder = 'images/ateliers/Atelier ' .$num;
-            $id = 'gal-atelier-' .$num;
-          ?>
-            <div class="dossier-row">
-              <?php echo gallery_button('Atelier ' . $num,$folder, $id,$color); ?>
-            </div>
-          <?php endif; ?>
+          <p class="atelier-label" style="--cat-color: <?php echo $color; ?>">Atelier <?php echo $num; ?></p>
+          <div class="dossier-row">
+            <?php foreach ($dossiersList as $item):
+              // Check if the item is a website link (contains domain extensions or http)
+              if (preg_match('#^(https?://|[\w-]+\.(app|com|net|org|dev|fr|ma)/?)#i', $item)) {
+                $url = preg_match('#^https?://#i', $item) ? $item : 'https://' . $item;
+            ?>
+                <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" rel="noopener" class="gallery-toggle" style="--cat-color:<?php echo $color; ?>">
+                  <?php echo htmlspecialchars($item); ?> ↗
+                </a>
+            <?php 
+              } else {
+                // Regular image folder gallery button
+                $folder = 'images/ateliers/Atelier ' . $num . '/' . $item;
+                $id = 'gal-atelier-' . $num . '-' . slugify($item);
+                echo gallery_button($item, $folder, $id, $color);
+              }
+            endforeach; ?>
+          </div>
         </div>
         <?php endforeach; ?>
       </div>
