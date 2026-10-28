@@ -21,7 +21,8 @@ $ateliers = [
   2 => ['Partie 1','Partie 2'], // <-- Modifiez/Ajoutez les dossiers pour Atelier 2 ici
   4 => 'https://websitenew-weld.vercel.app/',// <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
   5 => ['Partie 2','Partie 3'],
-  6 => 'https://atelier-6-nine.vercel.app/'
+  6 => 'https://atelier-6-nine.vercel.app/',
+  7 => ['url'=>'https://gitlab.com/Oussama-Laaziz07/atelier-sonarqube','label'=>'Voir le projet ↗']
 ];
 // ---------------------------------------------------------
 
@@ -292,11 +293,13 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
           <p class="atelier-label" style="--cat-color: <?php echo $color; ?>">Atelier <?php echo $num; ?></p>
           <div class="dossier-row">
             <?php 
-            // If the content is a single string (like a website URL)
-            if (is_string($content)): 
+            // A string is a site URL; an object can provide a custom link label.
+            if (is_string($content) || (is_array($content) && isset($content['url']))):
+              $linkUrl = is_array($content) ? $content['url'] : $content;
+              $linkLabel = is_array($content) ? $content['label'] : 'Visiter le site ↗';
             ?>
-              <a href="<?php echo htmlspecialchars($content); ?>" target="_blank" rel="noopener" class="gallery-toggle" style="--cat-color:<?php echo $color; ?>">
-                Visiter le site ↗
+              <a href="<?php echo htmlspecialchars($linkUrl); ?>" target="_blank" rel="noopener" class="gallery-toggle" style="--cat-color:<?php echo $color; ?>">
+                <?php echo htmlspecialchars($linkLabel); ?>
               </a>
             <?php 
             // If the content is an array of folders
