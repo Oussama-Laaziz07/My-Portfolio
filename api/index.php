@@ -19,7 +19,8 @@ $modules = [
 $ateliers = [
   1 => ['Dossier 2', 'Dossier 3 (AdvancedEventSolution)', 'Dossier 3 (DKM)', 'En groupe'],
   2 => ['Partie 1','Partie 2'], // <-- Modifiez/Ajoutez les dossiers pour Atelier 2 ici
-  4 => 'https://websitenew-weld.vercel.app/',// <-- Vide = cherche directement dans "images/ateliers/Atelier 3"
+  3 => [''],
+  4 => 'https://websitenew-weld.vercel.app/',// Atelier 4 project link
   5 => ['Partie 2','Partie 3'],
   6 => 'https://atelier-6-nine.vercel.app/',
   7 => ['url'=>'https://gitlab.com/Oussama-Laaziz07/atelier-sonarqube','label'=>'Voir le projet ↗']
@@ -305,9 +306,10 @@ footer .wrap{display:flex; justify-content:space-between; align-items:center; fl
             // If the content is an array of folders
             else: 
               foreach ($content as $d):
+                $label = $d !== '' ? $d : 'Photos';
                 $folder = 'images/ateliers/Atelier ' . $num . '/' . $d;
-                $id = 'gal-atelier-' . $num . '-' . slugify($d);
-                echo gallery_button($d, $folder, $id, $color);
+                $id = 'gal-atelier-' . $num . '-' . slugify($label);
+                echo gallery_button($label, $folder, $id, $color);
               endforeach; 
             endif; 
             ?>
